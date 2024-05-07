@@ -5,9 +5,9 @@ import handleEmbeddings from '../lib/handlers/embeddings.js'
 import { log, srv } from '../lib/util/log.js'
 import { version } from '../package.json'
 
-function respond(req, url, json) {
-  srv('respond %d: %s %s', 200, req.method, url.pathname)
-  return Response.json(json)
+function respond(req, url, status, json) {
+  srv('respond %d: %s %s', status, req.method, url.pathname)
+  return Response.json(json, { status })
 }
 
 function fail(req, url, status, text, headers) {
@@ -28,13 +28,21 @@ const server = Bun.serve({
       srv('request %s %s', req.method, url.pathname)
       if (url.pathname === '/api/chat') {
         if (req.method === 'POST') {
-          return respond(req, url, await handleChat(req, url))
+          return respond(req, url, 200, await handleChat(req, url))
         }
         return disallowMethod(req, url)
       }
       if (url.pathname === '/api/embeddings') {
         if (req.method === 'POST') {
-          return respond(req, url, await handleEmbeddings(req, url))
+          return respond(req, url, 200, await handleEmbeddings(req, url))
+        }
+        return disallowMethod(req, url)
+      }
+      if (url.pathname === '/api/shutdown') {
+        if (req.method === 'POST') {
+          setTimeout(() => server.stop(), 100)
+          log(': shutdown')
+          return respond(req, url, 204)
         }
         return disallowMethod(req, url)
       }

@@ -145,6 +145,14 @@ The property `stream` has to be always set to `false`, because the streaming mod
 }
 ```
 
+### Shutdown
+
+```
+❯ curl localhost:22434/api/shutdown -X POST
+```
+
+Gracefully shuts down the HTTP server and exits the process.
+
 ## Contributing
 
 In lieu of a formal styleguide, take care to maintain the existing coding style. Lint and test your code.
