@@ -1,5 +1,7 @@
 FROM oven/bun:1-alpine as base
 
+RUN apk update && apk upgrade --no-cache
+
 WORKDIR /usr/src/app
 
 FROM base AS install
