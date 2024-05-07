@@ -38,6 +38,13 @@ const server = Bun.serve({
         }
         return disallowMethod(req, url)
       }
+      if (url.pathname === '/api/ping') {
+        if (req.method === 'GET') {
+          log(': ping')
+          return respond(req, url, 204)
+        }
+        return disallowMethod(req, url)
+      }
       if (url.pathname === '/api/shutdown') {
         if (req.method === 'POST') {
           setTimeout(() => server.stop(), 100)

@@ -32,3 +32,6 @@ ENV DEBUG=$DEBUG
 USER bun
 EXPOSE 22434/tcp
 ENTRYPOINT [ "bun", "run", "dist/ollama-vertex-ai.js" ]
+
+HEALTHCHECK --interval=5m \
+  CMD curl -f http://localhost:22434/ping || exit 1

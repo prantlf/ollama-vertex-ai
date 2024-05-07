@@ -145,13 +145,21 @@ The property `stream` has to be always set to `false`, because the streaming mod
 }
 ```
 
+### Ping
+
+```
+❯ curl localhost:22434/api/ping
+```
+
+Responds with 204. Checks that the server is running.
+
 ### Shutdown
 
 ```
 ❯ curl localhost:22434/api/shutdown -X POST
 ```
 
-Gracefully shuts down the HTTP server and exits the process.
+Responds with 204. Gracefully shuts down the HTTP server and exits the process.
 
 ## Contributing
 
