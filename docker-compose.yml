@@ -1,0 +1,12 @@
+---
+version: '3.8'
+services:
+  ollama-vertex-ai:
+    image: ghcr.io/prantlf/ollama-vertex-ai
+    # environment:
+    #   - DEBUG=ovai,ovai:*
+    ports:
+      - 22434:22434
+    volumes:
+		  - ./google-account.json:/usr/src/app/google-account.json
+		  # - ./model-defaults.json:/usr/src/app/model-defaults.json

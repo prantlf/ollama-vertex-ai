@@ -1,0 +1,56 @@
+{
+  "name": "ollama-vertex-ai",
+  "version": "0.0.1",
+  "description": "REST API proxy to Vertex AI with the interface of ollama. HTTP server for accessing Vertex AI via the REST API interface of ollama.",
+  "author": "Ferdinand Prantl <prantlf@gmail.com> (http://prantl.tk)",
+  "license": "MIT",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/prantlf/ollama-vertex-ai/blob/master/LICENSE"
+    }
+  ],
+  "homepage": "http://github.com/prantlf/ollama-vertex-ai/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prantlf/ollama-vertex-ai.git"
+  },
+  "bugs": {
+    "url": "http://github.com/prantlf/ollama-vertex-ai/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "type": "module",
+  "bin": {
+    "ollama-vertex-ai": "dist/ollama-vertex-ai.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "bun build bin/ollama-vertex-ai.js --outdir=dist --external=debug --external=jsonwebtoken",
+    "test": "biome lint bin/*.js lib/**/*.js",
+    "start": "bin/ollama-vertex-ai.js"
+  },
+  "dependencies": {
+    "debug": "^4.3.4",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.7.3"
+  },
+  "keywords": [
+    "ollama",
+    "ollama-api",
+    "ollama-interface",
+    "vertex-ai",
+    "vertexai",
+    "google",
+    "ai",
+    "api-proxy"
+  ],
+  "trustedDependencies": [
+    "@biomejs/biome"
+  ]
+}

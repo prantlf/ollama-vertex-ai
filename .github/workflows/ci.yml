@@ -1,0 +1,96 @@
+name: Build, Test and Release
+
+on:
+  push:
+    branches:
+      - master
+    tags-ignore:
+      - '**'
+    paths-ignore:
+      - '**/*.md'
+      - LICENSE
+  pull_request:
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.bump.outputs.bumped }}
+      changed-files: ${{ steps.bump.outputs.changed-files }}
+      new-version: ${{ steps.bump.outputs.new-version }}
+    steps:
+    - uses: actions/checkout@v4
+    - uses: oven-sh/setup-bun@v1
+    - uses: prantlf/bump-version-action@v2
+      if: github.ref_name == 'master'
+      id: bump
+    - run: bun i --frozen-lockfile
+    - run: bun run build
+    - run: bun run test
+    - uses: prantlf/shelve-changes-action@v2
+
+  docker:
+    needs:
+      - linux
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: prantlf/unshelve-changes-action@v2
+      if: ${{ needs.linux.outputs.changed == 'true' }}
+      with:
+        files: ${{ needs.linux.outputs.changed-files }}
+        discard-shelf: false
+    - uses: hadolint/hadolint-action@v3.1.0
+    - uses: docker/build-push-action@v5
+      with:
+        push: false
+
+  release:
+    if: ${{ github.ref_name == 'master' && needs.linux.outputs.changed == 'true' }}
+    needs:
+      - linux
+      - docker
+    runs-on: macos-13
+    steps:
+    - uses: actions/checkout@v4
+    - uses: prantlf/unshelve-changes-action@v2
+      with:
+        files: ${{ needs.linux.outputs.changed-files }}
+        discard-shelf: false
+    - uses: prantlf/finish-release-action@v1
+      with:
+        no-archives: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  docker-publish:
+    if: ${{ github.ref_name == 'master' && needs.linux.outputs.changed == 'true' }}
+    needs:
+      - linux
+      - release
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: prantlf/unshelve-changes-action@v2
+      with:
+        files: ${{ needs.linux.outputs.changed-files }}
+    - uses: docker/metadata-action@v5
+      id: meta
+      with:
+        images: |
+          ghcr.io/prantlf/ollama-vertex-ai
+        tags: |
+          type=semver,pattern={{version}},value=v${{ needs.linux.outputs.new-version }}
+          type=semver,pattern={{major}}.{{minor}},value=v${{ needs.linux.outputs.new-version }}
+          type=semver,pattern={{major}},value=v${{ needs.linux.outputs.new-version }}
+    - uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - uses: docker/build-push-action@v5
+      with:
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
