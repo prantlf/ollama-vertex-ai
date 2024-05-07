@@ -1,6 +1,6 @@
 {
   "name": "ollama-vertex-ai",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "REST API proxy to Vertex AI with the interface of ollama. HTTP server for accessing Vertex AI via the REST API interface of ollama.",
   "author": "Ferdinand Prantl <prantlf@gmail.com> (http://prantl.tk)",
   "license": "MIT",
