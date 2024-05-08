@@ -35,6 +35,19 @@ Listening on http://localhost:22434 ...
 
 ### Configuring
 
+The following properties from `google-account.json` are used:
+
+```json
+{
+  "project_id": "...",
+  "private_key_id": "...",
+  "private_key": "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n",
+  "client_email": "...",
+  "scope": "https://www.googleapis.com/auth/cloud-platform", // optional, can be missing
+  "auth_uri": "https://www.googleapis.com/oauth2/v4/token"   // optional, can be missing
+}
+```
+
 Set the environment variable `PORT` to override the default port 22434.
 
 Set the environment variable `DEBUG` to one or more strings separated by commas to customise logging on `stderr`. The default value is `ovai` when run on the command line and `ovai:srv` inside the Docker container.

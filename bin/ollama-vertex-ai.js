@@ -62,17 +62,20 @@ const server = Bun.serve({
   },
   error(err) {
     const status = err.status || 500
+    const json = err.status && {
+      error: err.responseJSON?.error?.message || err.text || err.responseText
+    }
     if (err.req && err.url) {
-      const message = err.status ? err.message : err.stack
-      log('fail %d: %s %s\n%s', status, err.req.method, err.url.pathname, message)
+      if (json) {
+        log('fail %d: %s %s\n%O', status, err.req.method, err.url.pathname, json)
+      } else {
+        log('fail %d: %s %s\n%s', status, err.req.method, err.url.pathname, err.stack)
+      }
     } else {
       log('fail: %s', err.stack)
     }
-    if (err.status) {
-      const body = JSON.stringify({
-        error: err.responseJSON?.error?.message || err.responseText || err.message
-      })
-      return new Response(body, {
+    if (json) {
+      return new Response(JSON.stringify(json), {
         status,
         statusText: err.statusText,
         headers: { 'Content-Type': 'application/json' }
