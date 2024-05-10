@@ -1,12 +1,19 @@
----
 version: '3.8'
 services:
   ollama-vertex-ai:
-    image: ghcr.io/prantlf/ollama-vertex-ai
+    image: ${IMAGE_HUB-ghcr.io/prantlf/}ollama-vertex-ai
     # environment:
-    #   - DEBUG=ovai,ovai:*
+    #   DEBUG: ovai,ovai:*
     ports:
       - 22434:22434
     volumes:
-		  - ./google-account.json:/usr/src/app/google-account.json
-		  # - ./model-defaults.json:/usr/src/app/model-defaults.json
+      - ./google-account.json:/usr/src/app/google-account.json
+      # - ./model-defaults.json:/usr/src/app/model-defaults.json
+    healthcheck:
+      test: ["CMD", "/healthchk", "-m", "HEAD", "http://localhost:22434/api/ping"]
+      interval: 60s
+      timeout: 20s
+      start_period: 20s
+      start_interval: 2s
+      retries: 3
+    restart: unless-stopped

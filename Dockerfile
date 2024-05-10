@@ -20,18 +20,23 @@ COPY . .
 ENV NODE_ENV=production
 RUN bun run build && bun run test
 
+FROM prantlf/healthchk as healthchk
+
 FROM base AS release
+LABEL maintainer="Ferdinand Prantl <prantlf@gmail.com>"
 
 COPY --from=install /tmp/prod/node_modules node_modules
 COPY --from=build /usr/src/app/dist dist
 COPY --from=build /usr/src/app/package.json .
-
-ARG DEBUG=ovai,ovai:srv
-ENV DEBUG=$DEBUG
+COPY --from=healthchk /healthchk /
 
 USER bun
-EXPOSE 22434/tcp
+EXPOSE 22434
 ENTRYPOINT [ "bun", "run", "dist/ollama-vertex-ai.js" ]
 
-HEALTHCHECK --interval=5m \
-  CMD curl -f http://localhost:22434/ping || exit 1
+ARG DEBUG=ovai,ovai:srv
+ENV DEBUG=${DEBUG}
+ENV PORT=22434
+
+# HEALTHCHECK --interval=5m \
+#   CMD curl -f http://localhost:22434/ping || exit 1
