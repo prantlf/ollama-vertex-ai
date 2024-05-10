@@ -39,7 +39,7 @@ const server = Bun.serve({
         return disallowMethod(req, url)
       }
       if (url.pathname === '/api/ping') {
-        if (req.method === 'GET') {
+        if (req.method === 'GET' || req.method === 'HEAD') {
           log(': ping')
           return respond(req, url, 204)
         }
@@ -89,5 +89,5 @@ if (log.enabled) {
   log('version %s runs in %s', version, process.cwd())
   log('listen on http://localhost:%d', server.port)
 } else {
-  process.stderr.write(`Listening on http://localhost:${server.port} ...\n`)
+  process.stderr.write(`Listening on http://localhost:${server.port} …\n`)
 }
