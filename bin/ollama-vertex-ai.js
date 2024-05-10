@@ -2,6 +2,7 @@
 
 import handleChat from '../lib/handlers/chat.js'
 import handleEmbeddings from '../lib/handlers/embeddings.js'
+import handleGenerate from '../lib/handlers/generate.js'
 import { log, srv } from '../lib/util/log.js'
 import { version } from '../package.json'
 
@@ -29,6 +30,12 @@ const server = Bun.serve({
       if (url.pathname === '/api/chat') {
         if (req.method === 'POST') {
           return respond(req, url, 200, await handleChat(req, url))
+        }
+        return disallowMethod(req, url)
+      }
+      if (url.pathname === '/api/generate') {
+        if (req.method === 'POST') {
+          return respond(req, url, 200, await handleGenerate(req, url))
         }
         return disallowMethod(req, url)
       }

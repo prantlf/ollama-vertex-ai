@@ -97,7 +97,7 @@ See the original [REST API documentation] for details about the interface.
 
 ### Embeddings
 
-See the available [embedding models].
+Creates a vector from the specified prompt. See the available [embedding models].
 
 ```
 ❯ curl localhost:22434/api/embeddings -d '{
@@ -110,9 +110,48 @@ See the available [embedding models].
 
 The returned vector of floats has 768 dimensions.
 
+### Text
+
+Generates a text using the specified prompt. See the available [bison text models] and [gemini chat models].
+
+```
+❯ curl localhost:22434/api/generate -d '{
+  "model": "gemini-1.5-pro-preview-0409",
+  "prompt": "Describe guilds from Dungeons and Dragons.",
+  "stream": false
+}'
+
+{
+  "model": "gemini-1.5-pro-preview-0409",
+  "created_at": "2024-05-10T14:10:54.885Z",
+  "response": {
+    "role": "assistant",
+    "content": "Guilds serve as organizations that bring together individuals with ..."
+  },
+  "done": true,
+  "total_duration": 13884049373,
+  "load_duration": 0,
+  "prompt_eval_count": 7,
+  "prompt_eval_duration: 3471012343,
+  "eval_count: 557,
+  "eval_duration: 10413037030
+}
+```
+
+The property `stream` has to be always set to `false`, because the streaming mode isn't supported. The property `options` is optional with the following defaults:
+
+```
+"options": {
+  "num_predict": 8192,
+  "temperature": 1,
+  "top_p": 0.95,
+  "top_k": 40
+}
+```
+
 ### Chat
 
-See the available [bison chat models] and [gemini chat models].
+Replies to a chat with the specified message history. See the available [bison chat models] and [gemini chat models].
 
 ```
 ❯ curl localhost:22434/api/chat -d '{
@@ -160,19 +199,19 @@ The property `stream` has to be always set to `false`, because the streaming mod
 
 ### Ping
 
-```
-❯ curl localhost:22434/api/ping
-```
+Checks that the server is running.
 
-Responds with 204. Checks that the server is running.
+```
+❯ curl -f localhost:22434/api/ping -X HEAD
+```
 
 ### Shutdown
+
+Gracefully shuts down the HTTP server and exits the process.
 
 ```
 ❯ curl localhost:22434/api/shutdown -X POST
 ```
-
-Responds with 204. Gracefully shuts down the HTTP server and exits the process.
 
 ## Contributing
 
@@ -192,5 +231,6 @@ Licensed under the [MIT License].
 [docker-compose.yml]: ./docker-compose.yml
 [REST API documentation]: https://github.com/ollama/ollama/blob/main/docs/api.md
 [embedding models]: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text-embeddings#model_versions
+[bison text models]: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text#model_versions
 [bison chat models]: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text-chat#model_versions
 [gemini chat models]: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini#model_versions
