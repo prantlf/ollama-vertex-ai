@@ -92,6 +92,16 @@ const server = Bun.serve({
   }
 })
 
+process.on('SIGTERM', () => {
+  if (log.enabled) {
+    log('stop the server')
+  } else {
+    process.stderr.write('Stopping …\n')
+  }
+  server.stop()
+  process.exit(0)
+})
+
 if (log.enabled) {
   log('version %s runs in %s', version, process.cwd())
   log('listen on http://localhost:%d', server.port)
