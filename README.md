@@ -6,6 +6,8 @@
 
 REST API proxy to [Vertex AI] with the interface of [ollama]. HTTP server for accessing Vertex AI via the REST API interface of ollama.
 
+**WARNING**: This project is in a frozen state for the time being. The active project with the same functionality and more is [ovai].
+
 ## Synopsis
 
 Get embeddings for a text:
@@ -226,6 +228,7 @@ Licensed under the [MIT License].
 [MIT License]: http://en.wikipedia.org/wiki/MIT_License
 [Vertex AI]: https://cloud.google.com/vertex-ai
 [ollama]: https://ollama.com
+[ovai]: https://github.com/prantlf/ovai
 [Bun]: https://bun.sh
 [default model parameters]: ./model-defaults.json
 [docker-compose.yml]: ./docker-compose.yml
